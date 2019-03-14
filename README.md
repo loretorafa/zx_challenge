@@ -10,7 +10,7 @@ Tendo em vista que foi solicitado suporte multiplataforma e sabendo que o ambien
 
 Para Rodar:
 
-1-) Baixe o projeto no repositorio: https://dev.azure.com/loretorafa/_git/ZX_Challenge
+1-) Baixe o projeto no repositorio https://github.com/loretorafa/zx_challenge
 
 2-) No seu prompt de comando navegue até pasta ZX_Challenge.Api rode os seguintes comandos:
 
