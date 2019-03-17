@@ -1,4 +1,5 @@
 ﻿using FluentValidation.AspNetCore;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using ZX_Challenge.Application.GraphQL;
 using ZX_Challenge.Application.Services;
 using ZX_Challenge.Application.Validators;
 using ZX_Challenge.Domain.Interfaces.Repositories;
@@ -53,10 +56,20 @@ namespace ZX_Challenge.Api
 
             });
 
+            services.AddGraphQl(schema =>
+            {
+                schema.SetQueryType<PdvQuery>();
+                schema.SetMutationType<PdvMutation>();
+            });
+
             services.AddDbContext<ZxContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:ZX_Challenge"], x => x.UseNetTopologySuite()));
 
             services.AddScoped<IPdvRepository, PdvRepository>();
             services.AddScoped<IPdvService, PdvService>();
+
+            ConfigureGraphQlServices(services);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,7 +95,33 @@ namespace ZX_Challenge.Api
                 c.RoutePrefix = string.Empty;
             });
 
+            app.UseGraphiql("/graphiql", options =>
+            {
+                options.GraphQlEndpoint = "/graphql";
+            });
+
+            app.UseGraphQl("/graphql");
+
             app.UseMvc();
+        }
+
+        private static void ConfigureGraphQlServices(IServiceCollection services)
+        {
+            var graphQlProject = Assembly.GetAssembly(typeof(PdvQuery));
+            var projectNamespace = graphQlProject.GetName().Name;
+            var graphQlTypes = graphQlProject
+                               .GetTypes()
+                               .Where(t => t.IsClass
+                                        && t.IsPublic
+                                        && t.IsSubclassOf(typeof(GraphType))
+                                        && t.Namespace.StartsWith(projectNamespace, StringComparison.InvariantCultureIgnoreCase))
+                               .Select(x => x.GetTypeInfo())
+                               .ToList();
+
+            foreach (var type in graphQlTypes)
+            {
+                services.AddTransient(type.AsType());
+            }
         }
     }
 }

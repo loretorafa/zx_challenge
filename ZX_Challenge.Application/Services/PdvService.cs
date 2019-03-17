@@ -23,6 +23,7 @@ namespace ZX_Challenge.Application.Services
         public PdvResponse Create(PdvRequest request)
         {
             _validator.ValidateAndThrow(request);
+            //TODO: Implementar handler validação
 
             Pdv pdv = _repository.Insert(new Pdv(request));
 
