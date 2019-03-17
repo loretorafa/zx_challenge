@@ -35,7 +35,7 @@ Adorei desenvolver este projeto, super desafiador, pois nunca havia trabalhado c
 Também apanhei bastante para configurar a parte de DevOps no Azure trabalhando com containeres Docker, Azure Container Registry e Container Instances,
 evitando utilizar os recursos de Publish do Visual Studio com os quais estou acostumado, mas valeu muito o aprendizado.
 
-Único pesar foi que perdi muito tempo nesta parte e poderia ter utilizado para desenvolver um controller GraphQL, quem sabe em breve :)
+Adicionado api GraphQL no endpoint /graphql e documentação em /graphiql
 
 Espero que gostem tanto quanto eu, quaisquer dúvidas estou disponível.
 
